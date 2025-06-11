@@ -554,10 +554,7 @@
                 alert("تمام احادیث حذف شده‌اند یا هیچ گزاره‌ای انتخاب نشده است!");
                 return;
             }
-            let outputFileName = "output.json";
-            if (uploadedFileName.startsWith("question_") && uploadedFileName.endsWith(".json")) {
-                outputFileName = uploadedFileName.replace("question_", "question_output_");
-            }
+            let outputFileName = uploadedFileName + 'corrected.json';
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(output, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
