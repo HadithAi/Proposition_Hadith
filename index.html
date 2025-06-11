@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سوالات احادیث</title>
+        <!-- 🔹 اضافه کردن manifest.json برای PWA -->
+    <link rel="manifest" href="manifest.json">
+    <script>
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("service-worker.js")
+                .then(() => console.log("✅ Service Worker ثبت شد و سایت آماده آفلاین است!"))
+                .catch((error) => console.log("❌ خطا در ثبت Service Worker:", error));
+        }
+    </script>
+        
+        <!-- سایر لینک‌ها و استایل‌های سایت -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700&display=swap');
+        
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            text-align: center;
+            direction: rtl;
+            background: linear-gradient(135deg, #1e88e5, #00acc1);
+            background-size: cover;
+            color: white;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            width: 900px;
+            height: auto; /* اجازه می‌دهد ارتفاع با محتوای داخل تغییر کند */            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            color: black;
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-top: 20px; /* فاصله از بالای صفحه */
+            margin-bottom: 20px; /* فاصله از پایین صفحه */
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: row;
+            margin-top: 20px;
+        }
+        .button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s, color 0.3s;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+        .button-primary {
+            background: #007bff;
+            color: white;
+        }
+        .button-primary:hover {
+            background: #0056b3;
+        }
+        .button-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .button-secondary:hover {
+            background: #5a6268;
+        }
+        .input-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 20px; 
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-family: 'Vazirmatn', sans-serif;
+            text-align: right;
+        }
+        input[type="text"]:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.3);
+        }
+        #hadithDisplay {
+            margin-top: 20px;
+            min-height: 150px;
+        }
+        html {
+            min-height: 100vh; /* اطمینان از اینکه HTML تمام صفحه را پوشش می‌دهد */
+        }
+        #darkModeToggle {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 8px 12px;
+            font-size: 14px;
+            background: #444;
+            color: white;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .dark-mode #darkModeToggle {
+            background: white;
+            color: black;
+        }
+
+        .dark-mode {
+            background: linear-gradient(135deg, #121212, #1e1e1e);
+            color: white;
+        }
+
+        .dark-mode .container {
+            background: rgba(30, 30, 30, 0.95);
+            color: white;
+            box-shadow: 2px 2px 10px rgba(255, 255, 255, 0.1);
+        }
+        /* فایل styles.css */
+        input[type="checkbox"] {
+            accent-color: #007bff; /* آبی استاندارد */
+        }
+
+
+        .dark-mode .button-primary {
+            background: #007bff;
+        }
+
+        .dark-mode .button-primary:hover {
+            background: #0056b3;
+        }
+
+        .dark-mode .button-secondary {
+            background: #007bff;
+        }
+
+        .dark-mode .button-secondary:hover {
+            background: #0056b3;
+        }
+
+        .dark-mode input[type="text"] {
+            background: #222;
+            color: white;
+            border: 1px solid #555;
+        }
+
+        .dark-mode input[type="text"]::placeholder {
+            color: #bbb;
+        }
+
+        .dark-mode label {
+            color: white;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>سوالات احادیث</h2>
+        <button id="darkModeToggle" class="button button-secondary" 
+            data-light="☀️ حالت روز" 
+            data-dark="🌙 حالت شب">
+            🌙 حالت شب
+        </button>
+            <input type="file" id="jsonFile" accept="application/json">
+        <p id="hadithCounter"></p>
+        <div id="hadithDisplay"></div>
+        <div class="input-container">
+            <select id="addType" style="padding: 10px; border-radius: 5px;">
+                <option value="proposition">افزودن گزاره</option>
+                <option value="entity">افزودن موجودیت</option>
+            </select>
+            <input type="text" id="newKeyword" placeholder="متن گزاره یا هویت جدید را وارد کنید">
+            <select id="entityKey" style="display:none;">
+                <option value="Individual">فرد (Individual)</option>
+                <option value="Event">رویداد (Event)</option>
+                <option value="quality">ویژگی (quality)</option>
+                <option value="substance">جوهر (substance)</option>
+            </select>
+            <select id="propSelect" style="display:none;"></select>
+            <button class="button button-primary" onclick="addKeyword()">اضافه کن</button>
+        </div>
+        <div class="buttons">
+            <button id="saveBtn" class="button button-primary" onclick="downloadKeywords()" style="display: none;">ذخیره و دانلود</button>
+            <button id="nextBtn" class="button button-primary" onclick="nextHadith()" style="display: none;">بعدی</button>
+            <button id="prevBtn" class="button button-secondary" onclick="prevHadith()" style="display: none;">قبلی</button>
+        </div>
+        
+    </div>
+ 
+    
+
+
+    
+    <script>
+        let uploadedFileName = ""; // ✅ ذخیره نام فایل ورودی
+        let hadiths = [];
+        let hadithKeys = [];
+        let currentIndex = 0;
+        let selectedPropositions = {}; // {hadithIndex: [propositionIndex, ...]}
+        let selectedEntities = {}; // {hadithIndex: {propositionIndex: {entityKey: [selected values]}}}
+        let deletedHadiths = {};
+        let shouldScroll = true;
+
+        document.getElementById('jsonFile').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            uploadedFileName = file.name;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const raw = JSON.parse(e.target.result);
+                    if (!raw || typeof raw !== 'object') {
+                        alert("ساختار فایل JSON معتبر نیست.");
+                        return;
+                    }
+                    hadithKeys = Object.keys(raw);
+                    hadiths = hadithKeys.map(key => ({...raw[key], hadith_num: key}));
+                    if (!Array.isArray(hadiths) || hadiths.length === 0) {
+                        alert("فایل JSON معتبر نیست یا احادیثی در آن وجود ندارد.");
+                        return;
+                    }
+                } catch (error) {
+                    alert("خطا در پردازش فایل JSON. لطفاً یک فایل معتبر انتخاب کنید.");
+                    return;
+                }
+                alert("فایل با موفقیت بارگذاری شد!");
+                currentIndex = 0;
+                selectedPropositions = {};
+                selectedEntities = {};
+                deletedHadiths = {};
+                hadiths.forEach((_, idx) => {
+                    selectedPropositions[idx] = [];
+                    selectedEntities[idx] = {};
+                });
+                displayHadith();
+                document.activeElement.blur();
+                document.getElementById('nextBtn').focus();
+            };
+            reader.readAsText(file);
+        });
+        document.getElementById('darkModeToggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            // تغییر متن دکمه بر اساس وضعیت جدید
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            this.textContent = isDarkMode ? this.dataset.light : this.dataset.dark;
+    
+             // ذخیره وضعیت در localStorage
+            localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
+            });
+        // بررسی وضعیت قبلی و اعمال Dark Mode در صورت فعال بودن
+        window.onload = function() {
+            document.getElementById('prevBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('saveBtn').style.display = 'none';
+            if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('darkModeToggle').textContent = '☀️ حالت روز';
+        }
+        };
+        function toggleDeleteHadith() {
+            deletedHadiths[currentIndex] = document.getElementById("deleteHadith").checked;
+
+            if (deletedHadiths[currentIndex]) {
+                selectedPropositions[currentIndex] = []; // حذف کلیدواژه‌ها
+            } else {
+                selectedPropositions[currentIndex] = [...(hadiths[currentIndex].hadith_propositions || [])];
+            }
+
+            displayHadith(); // بروزرسانی صفحه
+        }
+
+        function displayHadith() {
+            if (hadiths.length === 0) return;
+            const hadithContainer = document.getElementById('hadithDisplay');
+            const hadithCounter = document.getElementById('hadithCounter');
+            const hadith = hadiths[currentIndex];
+            hadithCounter.innerText = `حدیث ${currentIndex + 1} از ${hadiths.length}`;
+            if (typeof deletedHadiths[currentIndex] === 'undefined') {
+                deletedHadiths[currentIndex] = false;
+            }
+            hadithContainer.innerHTML = '';
+            // حذف حدیث
+            const deleteCheckbox = document.createElement("input");
+            deleteCheckbox.type = "checkbox";
+            deleteCheckbox.id = "deleteHadith";
+            deleteCheckbox.checked = deletedHadiths[currentIndex];
+            deleteCheckbox.onchange = function() {
+                deletedHadiths[currentIndex] = this.checked;
+                displayHadith();
+            };
+            const deleteLabel = document.createElement("label");
+            deleteLabel.htmlFor = "deleteHadith";
+            deleteLabel.textContent = "حذف این حدیث";
+            hadithContainer.appendChild(deleteCheckbox);
+            hadithContainer.appendChild(deleteLabel);
+            // نمایش متن حدیث (content و content_ar)
+            let contentText = '';
+            if (hadith.content && Array.isArray(hadith.content)) {
+                if (hadith.content.length === 2) {
+                    contentText += hadith.content.join(' ');
+                } else {
+                    contentText += hadith.content.join('\n');
+                }
+            } else if (typeof hadith.content === 'string') {
+                contentText += hadith.content;
+            }
+            if (hadith.content_ar && Array.isArray(hadith.content_ar)) {
+                if (hadith.content_ar.length === 2) {
+                    contentText += (contentText ? '\n' : '') + hadith.content_ar.join(' ');
+                } else {
+                    contentText += (contentText ? '\n' : '') + hadith.content_ar.join('\n');
+                }
+            } else if (typeof hadith.content_ar === 'string') {
+                contentText += (contentText ? '\n' : '') + hadith.content_ar;
+            }
+            if (contentText) {
+                const p = document.createElement('p');
+                p.textContent = contentText;
+                hadithContainer.appendChild(p);
+            }
+            // نمایش propositions
+            if (Array.isArray(hadith.hadith_propositions)) {
+                hadith.hadith_propositions.forEach((prop, propIdx) => {
+                    const propDiv = document.createElement('div');
+                    propDiv.style.border = '1px solid #ccc';
+                    propDiv.style.margin = '10px 0';
+                    propDiv.style.padding = '8px';
+                    // Proposition content
+                    const propLabel = document.createElement('label');
+                    propLabel.style.fontWeight = 'bold';
+                    const propCheckbox = document.createElement('input');
+                    propCheckbox.type = 'checkbox';
+                    propCheckbox.checked = (selectedPropositions[currentIndex]||[]).includes(propIdx);
+                    propCheckbox.onchange = function() {
+                        if (this.checked) {
+                            if (!selectedPropositions[currentIndex].includes(propIdx))
+                                selectedPropositions[currentIndex].push(propIdx);
+                        } else {
+                            selectedPropositions[currentIndex] = selectedPropositions[currentIndex].filter(i => i !== propIdx);
+                        }
+                        displayHadith();
+                    };
+                    propLabel.appendChild(propCheckbox);
+                    propLabel.appendChild(document.createTextNode(' ' + prop.content));
+                    propDiv.appendChild(propLabel);
+                    // Entity items (exclude Reasoning)
+                    if (prop.entity && typeof prop.entity === 'object') {
+                        Object.entries(prop.entity).forEach(([key, value]) => {
+                            if (key === 'Reasoning') return; // Skip Reasoning
+                            const entityDiv = document.createElement('div');
+                            entityDiv.style.marginRight = '20px';
+                            entityDiv.style.marginTop = '4px';
+                            const entityLabel = document.createElement('span');
+                            entityLabel.textContent = key + ': ';
+                            entityDiv.appendChild(entityLabel);
+                            if (Array.isArray(value)) {
+                                value.forEach((v, vi) => {
+                                    const entCheckbox = document.createElement('input');
+                                    entCheckbox.type = 'checkbox';
+                                    entCheckbox.checked = (selectedEntities[currentIndex][propIdx]?.[key]||[]).includes(v);
+                                    entCheckbox.onchange = function() {
+                                        if (!selectedEntities[currentIndex][propIdx]) selectedEntities[currentIndex][propIdx] = {};
+                                        if (!selectedEntities[currentIndex][propIdx][key]) selectedEntities[currentIndex][propIdx][key] = [];
+                                        if (this.checked) {
+                                            selectedEntities[currentIndex][propIdx][key].push(v);
+                                        } else {
+                                            selectedEntities[currentIndex][propIdx][key] = selectedEntities[currentIndex][propIdx][key].filter(val => val !== v);
+                                        }
+                                    };
+                                    entityDiv.appendChild(entCheckbox);
+                                    entityDiv.appendChild(document.createTextNode(' ' + v + ' '));
+                                });
+                            } else if (typeof value === 'string') {
+                                const entText = document.createElement('span');
+                                entText.textContent = value;
+                                entityDiv.appendChild(entText);
+                            }
+                            propDiv.appendChild(entityDiv);
+                        });
+                    }
+                    hadithContainer.appendChild(propDiv);
+                });
+            }
+            document.getElementById('jsonFile').style.display = currentIndex === 0 ? 'block' : 'none';
+            document.getElementById('prevBtn').style.display = currentIndex > 0 ? 'inline-block' : 'none';
+            document.getElementById('nextBtn').style.display = currentIndex < hadiths.length - 1 ? 'inline-block' : 'none';
+            document.getElementById('saveBtn').style.display = currentIndex === hadiths.length - 1 ? 'inline-block' : 'none';
+            if (shouldScroll) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+        
+        function toggleKeyword(checkbox) {
+            // اگر کاربر حدیث را حذف کرده بود و حالا یک کلیدواژه را انتخاب کند، تیک حذف حدیث را برداریم
+            if (deletedHadiths[currentIndex]) {
+            deletedHadiths[currentIndex] = false;
+            document.getElementById("deleteHadith").checked = false;
+            }
+            if (checkbox.checked) {
+                if (!selectedPropositions[currentIndex].includes(checkbox.value)) {
+                    selectedPropositions[currentIndex].push(checkbox.value);
+                }
+            } else {
+                selectedPropositions[currentIndex] = selectedPropositions[currentIndex].filter(k => k !== checkbox.value);
+            }
+            shouldScroll = false; // ❌ هنگام اضافه کردن کلیدواژه، اسکرول نکند
+            displayHadith(); // بروز رسانی نمایش حدیث
+
+        }
+
+        document.getElementById('addType').addEventListener('change', function() {
+            const type = this.value;
+            const entityKeyInput = document.getElementById('entityKey');
+            const propSelect = document.getElementById('propSelect');
+            if (type === 'entity') {
+                entityKeyInput.style.display = 'inline-block';
+                propSelect.style.display = 'inline-block';
+                // Populate propSelect with current hadith propositions
+                propSelect.innerHTML = '';
+                if (hadiths[currentIndex] && Array.isArray(hadiths[currentIndex].hadith_propositions)) {
+                    hadiths[currentIndex].hadith_propositions.forEach((prop, idx) => {
+                        const option = document.createElement('option');
+                        option.value = idx;
+                        option.textContent = prop.content;
+                        propSelect.appendChild(option);
+                    });
+                }
+            } else {
+                entityKeyInput.style.display = 'none';
+                propSelect.style.display = 'none';
+            }
+        });
+
+        function addKeyword() {
+            const addType = document.getElementById('addType').value;
+            const newKeywordInput = document.getElementById('newKeyword');
+            const newKeyword = newKeywordInput.value.trim();
+            if (addType === 'proposition') {
+                if (newKeyword === '') return;
+                // Add new proposition to current hadith
+                if (!hadiths[currentIndex].hadith_propositions) hadiths[currentIndex].hadith_propositions = [];
+                hadiths[currentIndex].hadith_propositions.push({
+                    content: newKeyword,
+                    entity: {}
+                });
+                // Update selectedPropositions and selectedEntities
+                if (!selectedPropositions[currentIndex]) selectedPropositions[currentIndex] = [];
+                selectedPropositions[currentIndex].push(hadiths[currentIndex].hadith_propositions.length - 1);
+                if (!selectedEntities[currentIndex]) selectedEntities[currentIndex] = {};
+                shouldScroll = false;
+                displayHadith();
+            } else if (addType === 'entity') {
+                const entityKeyInput = document.getElementById('entityKey');
+                const entityKey = entityKeyInput.value;
+                const propSelect = document.getElementById('propSelect');
+                const propIdx = parseInt(propSelect.value, 10);
+                if (newKeyword === '' || entityKey === '' || isNaN(propIdx)) return;
+                // Add entity to the selected proposition
+                const prop = hadiths[currentIndex].hadith_propositions[propIdx];
+                if (!prop.entity) prop.entity = {};
+                if (!Array.isArray(prop.entity[entityKey])) prop.entity[entityKey] = [];
+                if (!prop.entity[entityKey].includes(newKeyword)) {
+                    prop.entity[entityKey].push(newKeyword);
+                }
+                // Also update selectedEntities for this proposition/entity
+                if (!selectedEntities[currentIndex][propIdx]) selectedEntities[currentIndex][propIdx] = {};
+                if (!Array.isArray(selectedEntities[currentIndex][propIdx][entityKey])) selectedEntities[currentIndex][propIdx][entityKey] = [];
+                if (!selectedEntities[currentIndex][propIdx][entityKey].includes(newKeyword)) {
+                    selectedEntities[currentIndex][propIdx][entityKey].push(newKeyword);
+                }
+                shouldScroll = false;
+                displayHadith();
+            }
+            newKeywordInput.value = '';
+            if (document.getElementById('entityKey')) document.getElementById('entityKey').selectedIndex = 0;
+            newKeywordInput.blur();
+            const nextBtn = document.getElementById('nextBtn');
+            if (nextBtn && nextBtn.style.display !== 'none') {
+                nextBtn.focus();
+            }
+        }
+
+        function nextHadith() {
+            if (currentIndex < hadiths.length - 1) {
+                currentIndex++;
+                shouldScroll = true; // ✅ هنگام تغییر حدیث، اسکرول کند
+                displayHadith();
+            }
+        }
+
+        function prevHadith() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                shouldScroll = true; // ✅ هنگام تغییر حدیث، اسکرول کند
+                displayHadith();
+            }
+        }
+
+        function downloadKeywords() {
+            let output = [];
+            for (let i = 0; i < hadiths.length; i++) {
+                if (deletedHadiths[i]) continue;
+                let hadith = hadiths[i];
+                let outProps = [];
+                if (Array.isArray(hadith.hadith_propositions)) {
+                    hadith.hadith_propositions.forEach((prop, propIdx) => {
+                        if ((selectedPropositions[i]||[]).includes(propIdx)) {
+                            let outEntity = {};
+                            if (prop.entity && typeof prop.entity === 'object') {
+                                Object.entries(prop.entity).forEach(([key, value]) => {
+                                    if (Array.isArray(value)) {
+                                        outEntity[key] = (selectedEntities[i]?.[propIdx]?.[key]) || [];
+                                    } else if (typeof value === 'string') {
+                                        outEntity[key] = value;
+                                    }
+                                });
+                            }
+                            outProps.push({
+                                content: prop.content,
+                                entity: outEntity
+                            });
+                        }
+                    });
+                }
+                if (outProps.length > 0) {
+                    output.push({
+                        hadith_num: hadith.hadith_num,
+                        content: hadith.content,
+                        hadith_propositions: outProps
+                    });
+                }
+            }
+            if (output.length === 0) {
+                alert("تمام احادیث حذف شده‌اند یا هیچ گزاره‌ای انتخاب نشده است!");
+                return;
+            }
+            let outputFileName = "output.json";
+            if (uploadedFileName.startsWith("question_") && uploadedFileName.endsWith(".json")) {
+                outputFileName = uploadedFileName.replace("question_", "question_output_");
+            }
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(output, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", outputFileName);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            document.body.removeChild(downloadAnchor);
+        }
+
+        document.getElementById('newKeyword').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                addKeyword();
+                event.preventDefault();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            const activeElement = document.activeElement;
+            const isTyping = activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA';
+
+            if (isTyping) return; // اگر در حال نوشتن بود، هیچ کاری نکن
+
+            if (event.key === 'ArrowRight') {
+                nextHadith();
+            } else if (event.key === 'ArrowLeft') {
+                prevHadith();
+            }
+        });
+
+    </script>
+    <script>
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("/service-worker.js")
+                .then(() => console.log("✅ Service Worker ثبت شد و سایت آماده نصب است!"))
+                .catch((error) => console.log("❌ خطا در ثبت Service Worker:", error));
+        }
+    </script>
+</body>
+</html>
