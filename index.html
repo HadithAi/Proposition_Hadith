@@ -17,8 +17,21 @@
         <!-- سایر لینک‌ها و استایل‌های سایت -->
     <link rel="stylesheet" href="styles.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap');
         
+        :root {
+            --primary-color: #1e88e5;
+            --primary-dark: #1565c0;
+            --secondary-color: #00acc1;
+            --text-color: #333;
+            --bg-color: #f5f5f5;
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+            --success-color: #4caf50;
+            --danger-color: #f44336;
+            --warning-color: #ff9800;
+        }
+
         body {
             font-family: 'Vazirmatn', sans-serif;
             text-align: center;
@@ -32,144 +45,278 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            line-height: 1.6;
         }
+
         .container {
-            width: 900px;
-            height: auto; /* اجازه می‌دهد ارتفاع با محتوای داخل تغییر کند */            padding: 20px;
+            width: 90%;
+            max-width: 1200px;
+            height: auto;
+            padding: 2rem;
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 10px;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
-            color: black;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            color: var(--text-color);
             text-align: right;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            margin-top: 20px; /* فاصله از بالای صفحه */
-            margin-bottom: 20px; /* فاصله از پایین صفحه */
+            gap: 1.5rem;
+            margin: 2rem auto;
         }
+
+        h2 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
         .buttons {
             display: flex;
             justify-content: space-between;
-            flex-direction: row;
-            margin-top: 20px;
+            gap: 1rem;
+            margin-top: 1rem;
         }
+
         .button {
-            padding: 10px 15px;
+            padding: 0.8rem 1.5rem;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
-            transition: background 0.3s, color 0.3s;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
             font-family: 'Vazirmatn', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
+
         .button-primary {
-            background: #007bff;
+            background: var(--primary-color);
             color: white;
         }
+
         .button-primary:hover {
-            background: #0056b3;
+            background: var(--primary-dark);
+            transform: translateY(-2px);
         }
+
         .button-secondary {
-            background: #6c757d;
+            background: var(--secondary-color);
             color: white;
         }
+
         .button-secondary:hover {
-            background: #5a6268;
+            background: #00838f;
+            transform: translateY(-2px);
         }
+
         .input-container {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-top: 20px; 
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
         }
-        input[type="text"] {
+
+        input[type="text"], select {
             flex: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            min-width: 200px;
+            padding: 0.8rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
             transition: all 0.3s ease;
             font-family: 'Vazirmatn', sans-serif;
             text-align: right;
-        }
-        input[type="text"]:focus {
-            border-color: #007bff;
-            outline: none;
-            box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.3);
-        }
-        #hadithDisplay {
-            margin-top: 20px;
-            min-height: 150px;
-        }
-        html {
-            min-height: 100vh; /* اطمینان از اینکه HTML تمام صفحه را پوشش می‌دهد */
-        }
-        #darkModeToggle {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            padding: 8px 12px;
-            font-size: 14px;
-            background: #444;
-            color: white;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-            transition: background 0.3s ease, color 0.3s ease;
+            font-size: 1rem;
         }
 
-        .dark-mode #darkModeToggle {
+        input[type="text"]:focus, select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.2);
+        }
+
+        #hadithDisplay {
+            margin-top: 1.5rem;
+            min-height: 200px;
+            background: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .proposition-card {
             background: white;
-            color: black;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .proposition-card:hover {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .entity-section {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: var(--bg-color);
+            border-radius: 6px;
+        }
+
+        .entity-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-color);
+        }
+
+        #darkModeToggle {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            padding: 0.8rem 1.2rem;
+            font-size: 1rem;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #darkModeToggle:hover {
+            transform: translateY(-2px);
         }
 
         .dark-mode {
+            --primary-color: #64b5f6;
+            --primary-dark: #42a5f5;
+            --secondary-color: #4dd0e1;
+            --text-color: #e0e0e0;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --border-color: #333;
             background: linear-gradient(135deg, #121212, #1e1e1e);
-            color: white;
         }
 
         .dark-mode .container {
-            background: rgba(30, 30, 30, 0.95);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .dark-mode .proposition-card {
+            background: #2d2d2d;
+        }
+
+        .dark-mode .entity-section {
+            background: #2d2d2d;
+        }
+
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-upload-label {
+            display: block;
+            padding: 1rem;
+            background: var(--primary-color);
             color: white;
-            box-shadow: 2px 2px 10px rgba(255, 255, 255, 0.1);
-        }
-        /* فایل styles.css */
-        input[type="checkbox"] {
-            accent-color: #007bff; /* آبی استاندارد */
-        }
-
-
-        .dark-mode .button-primary {
-            background: #007bff;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        .dark-mode .button-primary:hover {
-            background: #0056b3;
+        .file-upload-label:hover {
+            background: var(--primary-dark);
         }
 
-        .dark-mode .button-secondary {
-            background: #007bff;
+        .hadith-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--bg-color);
+            border-radius: 8px;
         }
 
-        .dark-mode .button-secondary:hover {
-            background: #0056b3;
+        .hadith-arabic {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-top: 1rem;
         }
 
-        .dark-mode input[type="text"] {
-            background: #222;
+        .delete-hadith {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            padding: 0.5rem;
+            background: var(--danger-color);
             color: white;
-            border: 1px solid #555;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        .dark-mode input[type="text"]::placeholder {
-            color: #bbb;
+        .delete-hadith:hover {
+            background: #d32f2f;
         }
 
-        .dark-mode label {
-            color: white;
+        .hadith-counter {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            font-weight: 500;
+            margin: 1rem 0;
         }
 
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 1rem;
+            }
 
+            .input-container {
+                flex-direction: column;
+            }
+
+            input[type="text"], select {
+                width: 100%;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .button {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -180,30 +327,57 @@
             data-dark="🌙 حالت شب">
             🌙 حالت شب
         </button>
-            <input type="file" id="jsonFile" accept="application/json">
-        <p id="hadithCounter"></p>
-        <div id="hadithDisplay"></div>
+
+        <div class="file-upload">
+            <label class="file-upload-label">
+                <span>📁 انتخاب فایل JSON</span>
+                <input type="file" id="jsonFile" accept="application/json">
+            </label>
+        </div>
+
+        <div id="hadithCounter" class="hadith-counter"></div>
+        
+        <div id="hadithDisplay">
+            <!-- Content will be dynamically inserted here -->
+        </div>
+
         <div class="input-container">
-            <select id="addType" style="padding: 10px; border-radius: 5px;">
+            <select id="addType" class="select-input">
                 <option value="proposition">افزودن گزاره</option>
                 <option value="entity">افزودن موجودیت</option>
             </select>
-            <input type="text" id="newKeyword" placeholder="متن گزاره یا هویت جدید را وارد کنید">
-            <select id="entityKey" style="display:none;">
+            
+            <input type="text" id="newKeyword" placeholder="متن گزاره یا هویت جدید را وارد کنید" class="text-input">
+            
+            <select id="entityKey" class="select-input" style="display:none;">
                 <option value="Individual">فرد (Individual)</option>
                 <option value="Event">رویداد (Event)</option>
                 <option value="quality">ویژگی (quality)</option>
                 <option value="substance">جوهر (substance)</option>
             </select>
-            <select id="propSelect" style="display:none;"></select>
-            <button class="button button-primary" onclick="addKeyword()">اضافه کن</button>
+            
+            <select id="propSelect" class="select-input" style="display:none;"></select>
+            
+            <button class="button button-primary" onclick="addKeyword()">
+                <span>➕</span>
+                <span>اضافه کن</span>
+            </button>
         </div>
+
         <div class="buttons">
-            <button id="saveBtn" class="button button-primary" onclick="downloadKeywords()" style="display: none;">ذخیره و دانلود</button>
-            <button id="nextBtn" class="button button-primary" onclick="nextHadith()" style="display: none;">بعدی</button>
-            <button id="prevBtn" class="button button-secondary" onclick="prevHadith()" style="display: none;">قبلی</button>
+            <button id="saveBtn" class="button button-primary" onclick="downloadKeywords()" style="display: none;">
+                <span>💾</span>
+                <span>ذخیره و دانلود</span>
+            </button>
+            <button id="nextBtn" class="button button-primary" onclick="nextHadith()" style="display: none;">
+                <span>➡️</span>
+                <span>بعدی</span>
+            </button>
+            <button id="prevBtn" class="button button-secondary" onclick="prevHadith()" style="display: none;">
+                <span>⬅️</span>
+                <span>قبلی</span>
+            </button>
         </div>
-        
     </div>
  
     
@@ -295,11 +469,16 @@
             const hadithCounter = document.getElementById('hadithCounter');
             const hadith = hadiths[currentIndex];
             hadithCounter.innerText = `حدیث ${currentIndex + 1} از ${hadiths.length}`;
+            
             if (typeof deletedHadiths[currentIndex] === 'undefined') {
                 deletedHadiths[currentIndex] = false;
             }
+
             hadithContainer.innerHTML = '';
-            // حذف حدیث
+
+            // Delete Hadith Section
+            const deleteSection = document.createElement("div");
+            deleteSection.className = "delete-hadith";
             const deleteCheckbox = document.createElement("input");
             deleteCheckbox.type = "checkbox";
             deleteCheckbox.id = "deleteHadith";
@@ -311,43 +490,55 @@
             const deleteLabel = document.createElement("label");
             deleteLabel.htmlFor = "deleteHadith";
             deleteLabel.textContent = "حذف این حدیث";
-            hadithContainer.appendChild(deleteCheckbox);
-            hadithContainer.appendChild(deleteLabel);
-            // نمایش متن حدیث (content و content_ar)
-            let contentText = '';
+            deleteSection.appendChild(deleteCheckbox);
+            deleteSection.appendChild(deleteLabel);
+            hadithContainer.appendChild(deleteSection);
+
+            // Hadith Content Section
+            const contentSection = document.createElement("div");
+            contentSection.className = "hadith-content";
+
+            // Display Persian content
             if (hadith.content && Array.isArray(hadith.content)) {
-                if (hadith.content.length === 2) {
-                    contentText += hadith.content.join(' ');
-                } else {
-                    contentText += hadith.content.join('\n');
-                }
+                const persianContent = document.createElement("div");
+                persianContent.className = "hadith-persian";
+                persianContent.textContent = hadith.content.join(' ');
+                contentSection.appendChild(persianContent);
             } else if (typeof hadith.content === 'string') {
-                contentText += hadith.content;
+                const persianContent = document.createElement("div");
+                persianContent.className = "hadith-persian";
+                persianContent.textContent = hadith.content;
+                contentSection.appendChild(persianContent);
             }
+
+            // Display Arabic content
             if (hadith.content_ar && Array.isArray(hadith.content_ar)) {
-                if (hadith.content_ar.length === 2) {
-                    contentText += (contentText ? '\n' : '') + hadith.content_ar.join(' ');
-                } else {
-                    contentText += (contentText ? '\n' : '') + hadith.content_ar.join('\n');
-                }
+                const arabicContent = document.createElement("div");
+                arabicContent.className = "hadith-arabic";
+                arabicContent.textContent = hadith.content_ar.join(' ');
+                contentSection.appendChild(arabicContent);
             } else if (typeof hadith.content_ar === 'string') {
-                contentText += (contentText ? '\n' : '') + hadith.content_ar;
+                const arabicContent = document.createElement("div");
+                arabicContent.className = "hadith-arabic";
+                arabicContent.textContent = hadith.content_ar;
+                contentSection.appendChild(arabicContent);
             }
-            if (contentText) {
-                const p = document.createElement('p');
-                p.textContent = contentText;
-                hadithContainer.appendChild(p);
-            }
-            // نمایش propositions
+
+            hadithContainer.appendChild(contentSection);
+
+            // Propositions Section
             if (Array.isArray(hadith.hadith_propositions)) {
+                const propositionsSection = document.createElement("div");
+                propositionsSection.className = "propositions-section";
+
                 hadith.hadith_propositions.forEach((prop, propIdx) => {
-                    const propDiv = document.createElement('div');
-                    propDiv.style.border = '1px solid #ccc';
-                    propDiv.style.margin = '10px 0';
-                    propDiv.style.padding = '8px';
-                    // Proposition content
-                    const propLabel = document.createElement('label');
-                    propLabel.style.fontWeight = 'bold';
+                    const propCard = document.createElement('div');
+                    propCard.className = 'proposition-card';
+
+                    // Proposition Header
+                    const propHeader = document.createElement('div');
+                    propHeader.className = 'proposition-header';
+                    
                     const propCheckbox = document.createElement('input');
                     propCheckbox.type = 'checkbox';
                     propCheckbox.checked = (selectedPropositions[currentIndex]||[]).includes(propIdx);
@@ -360,21 +551,33 @@
                         }
                         displayHadith();
                     };
-                    propLabel.appendChild(propCheckbox);
-                    propLabel.appendChild(document.createTextNode(' ' + prop.content));
-                    propDiv.appendChild(propLabel);
-                    // Entity items (exclude Reasoning)
+
+                    const propContent = document.createElement('span');
+                    propContent.className = 'proposition-content';
+                    propContent.textContent = prop.content;
+
+                    propHeader.appendChild(propCheckbox);
+                    propHeader.appendChild(propContent);
+                    propCard.appendChild(propHeader);
+
+                    // Entity Section
                     if (prop.entity && typeof prop.entity === 'object') {
                         Object.entries(prop.entity).forEach(([key, value]) => {
-                            if (key === 'Reasoning') return; // Skip Reasoning
-                            const entityDiv = document.createElement('div');
-                            entityDiv.style.marginRight = '20px';
-                            entityDiv.style.marginTop = '4px';
-                            const entityLabel = document.createElement('span');
-                            entityLabel.textContent = key + ': ';
-                            entityDiv.appendChild(entityLabel);
+                            if (key === 'Reasoning') return;
+
+                            const entitySection = document.createElement('div');
+                            entitySection.className = 'entity-section';
+
+                            const entityTitle = document.createElement('div');
+                            entityTitle.className = 'entity-title';
+                            entityTitle.textContent = key + ':';
+                            entitySection.appendChild(entityTitle);
+
                             if (Array.isArray(value)) {
                                 value.forEach((v, vi) => {
+                                    const entityItem = document.createElement('div');
+                                    entityItem.className = 'entity-item';
+
                                     const entCheckbox = document.createElement('input');
                                     entCheckbox.type = 'checkbox';
                                     entCheckbox.checked = (selectedEntities[currentIndex][propIdx]?.[key]||[]).includes(v);
@@ -387,24 +590,37 @@
                                             selectedEntities[currentIndex][propIdx][key] = selectedEntities[currentIndex][propIdx][key].filter(val => val !== v);
                                         }
                                     };
-                                    entityDiv.appendChild(entCheckbox);
-                                    entityDiv.appendChild(document.createTextNode(' ' + v + ' '));
+
+                                    const entityLabel = document.createElement('label');
+                                    entityLabel.textContent = v;
+
+                                    entityItem.appendChild(entCheckbox);
+                                    entityItem.appendChild(entityLabel);
+                                    entitySection.appendChild(entityItem);
                                 });
                             } else if (typeof value === 'string') {
-                                const entText = document.createElement('span');
-                                entText.textContent = value;
-                                entityDiv.appendChild(entText);
+                                const entityItem = document.createElement('div');
+                                entityItem.className = 'entity-item';
+                                entityItem.textContent = value;
+                                entitySection.appendChild(entityItem);
                             }
-                            propDiv.appendChild(entityDiv);
+
+                            propCard.appendChild(entitySection);
                         });
                     }
-                    hadithContainer.appendChild(propDiv);
+
+                    propositionsSection.appendChild(propCard);
                 });
+
+                hadithContainer.appendChild(propositionsSection);
             }
+
+            // Update button visibility
             document.getElementById('jsonFile').style.display = currentIndex === 0 ? 'block' : 'none';
             document.getElementById('prevBtn').style.display = currentIndex > 0 ? 'inline-block' : 'none';
             document.getElementById('nextBtn').style.display = currentIndex < hadiths.length - 1 ? 'inline-block' : 'none';
             document.getElementById('saveBtn').style.display = currentIndex === hadiths.length - 1 ? 'inline-block' : 'none';
+
             if (shouldScroll) {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
