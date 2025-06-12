@@ -657,6 +657,9 @@
                     if (prop.entity && typeof prop.entity === 'object') {
                         Object.entries(prop.entity).forEach(([key, value]) => {
                             if (key === 'Reasoning') return;
+                            
+                            // Skip empty arrays
+                            if (Array.isArray(value) && value.length === 0) return;
 
                             const entitySection = document.createElement('div');
                             entitySection.className = 'entity-section';
