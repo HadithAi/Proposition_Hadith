@@ -406,6 +406,82 @@
                 width: 100%;
             }
         }
+
+        .edit-button {
+            background: transparent;
+            color: #666;
+            border: 1px solid #666;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            margin-right: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.7;
+        }
+
+        .edit-button:hover {
+            background: #666;
+            color: white;
+            transform: translateY(-1px);
+            opacity: 1;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .edit-input {
+            padding: 6px 12px;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            margin-right: 8px;
+            font-family: 'Vazirmatn', sans-serif;
+            direction: rtl;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            width: 200px;
+        }
+
+        .edit-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.2);
+        }
+
+        .edit-actions {
+            display: inline-flex;
+            gap: 6px;
+            margin-right: 8px;
+        }
+
+        .save-edit, .cancel-edit {
+            padding: 4px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .save-edit {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .cancel-edit {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .save-edit:hover, .cancel-edit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -680,6 +756,7 @@
                         } else {
                             selectedPropositions[currentIndex] = selectedPropositions[currentIndex].filter(i => i !== propIdx);
                         }
+                        shouldScroll = false;
                         displayHadith();
                     };
 
@@ -687,8 +764,60 @@
                     propContent.className = 'proposition-content';
                     propContent.textContent = prop.content;
 
+                    const editButton = document.createElement('button');
+                    editButton.className = 'edit-button';
+                    editButton.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>';
+                    editButton.onclick = function() {
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.className = 'edit-input';
+                        input.value = prop.content;
+                        
+                        const saveButton = document.createElement('button');
+                        saveButton.className = 'save-edit';
+                        saveButton.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> ذخیره';
+                        saveButton.onclick = function() {
+                            prop.content = input.value;
+                            shouldScroll = false;
+                            displayHadith();
+                        };
+
+                        const cancelButton = document.createElement('button');
+                        cancelButton.className = 'cancel-edit';
+                        cancelButton.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> انصراف';
+                        cancelButton.onclick = function() {
+                            shouldScroll = false;
+                            displayHadith();
+                        };
+
+                        // Add keyboard event listeners
+                        input.addEventListener('keydown', function(event) {
+                            if (event.key === 'Enter') {
+                                event.preventDefault();
+                                saveButton.click();
+                            } else if (event.key === 'Escape') {
+                                event.preventDefault();
+                                cancelButton.click();
+                            }
+                        });
+
+                        const editActions = document.createElement('div');
+                        editActions.className = 'edit-actions';
+                        editActions.appendChild(saveButton);
+                        editActions.appendChild(cancelButton);
+
+                        propHeader.innerHTML = '';
+                        propHeader.appendChild(propCheckbox);
+                        propHeader.appendChild(input);
+                        propHeader.appendChild(editActions);
+                        
+                        // Focus the input field
+                        input.focus();
+                    };
+
                     propHeader.appendChild(propCheckbox);
                     propHeader.appendChild(propContent);
+                    propHeader.appendChild(editButton);
                     propCard.appendChild(propHeader);
 
                     // Add drag and drop event listeners
@@ -734,8 +863,70 @@
                                     const entityLabel = document.createElement('label');
                                     entityLabel.textContent = v;
 
+                                    const editButton = document.createElement('button');
+                                    editButton.className = 'edit-button';
+                                    editButton.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>';
+                                    editButton.onclick = function() {
+                                        const input = document.createElement('input');
+                                        input.type = 'text';
+                                        input.className = 'edit-input';
+                                        input.value = v;
+                                        
+                                        const saveButton = document.createElement('button');
+                                        saveButton.className = 'save-edit';
+                                        saveButton.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> ذخیره';
+                                        saveButton.onclick = function() {
+                                            const newValue = input.value;
+                                            const index = prop.entity[key].indexOf(v);
+                                            if (index !== -1) {
+                                                prop.entity[key][index] = newValue;
+                                                // Update selected entities if this value was selected
+                                                if (selectedEntities[currentIndex][propIdx]?.[key]?.includes(v)) {
+                                                    selectedEntities[currentIndex][propIdx][key] = selectedEntities[currentIndex][propIdx][key].map(val => 
+                                                        val === v ? newValue : val
+                                                    );
+                                                }
+                                            }
+                                            shouldScroll = false;
+                                            displayHadith();
+                                        };
+
+                                        const cancelButton = document.createElement('button');
+                                        cancelButton.className = 'cancel-edit';
+                                        cancelButton.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> انصراف';
+                                        cancelButton.onclick = function() {
+                                            shouldScroll = false;
+                                            displayHadith();
+                                        };
+
+                                        // Add keyboard event listeners
+                                        input.addEventListener('keydown', function(event) {
+                                            if (event.key === 'Enter') {
+                                                event.preventDefault();
+                                                saveButton.click();
+                                            } else if (event.key === 'Escape') {
+                                                event.preventDefault();
+                                                cancelButton.click();
+                                            }
+                                        });
+
+                                        const editActions = document.createElement('div');
+                                        editActions.className = 'edit-actions';
+                                        editActions.appendChild(saveButton);
+                                        editActions.appendChild(cancelButton);
+
+                                        entityItem.innerHTML = '';
+                                        entityItem.appendChild(entCheckbox);
+                                        entityItem.appendChild(input);
+                                        entityItem.appendChild(editActions);
+                                        
+                                        // Focus the input field
+                                        input.focus();
+                                    };
+
                                     entityItem.appendChild(entCheckbox);
                                     entityItem.appendChild(entityLabel);
+                                    entityItem.appendChild(editButton);
                                     entitySection.appendChild(entityItem);
                                 });
                             } else if (typeof value === 'string') {
