@@ -295,6 +295,65 @@
             margin: 1rem 0;
         }
 
+        /* Toast Notification Styles */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background: var(--card-bg);
+            color: var(--text-color);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 300px;
+            max-width: 400px;
+            transform: translateX(120%);
+            transition: transform 0.3s ease-in-out;
+            border-right: 4px solid var(--primary-color);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-right-color: var(--success-color);
+        }
+
+        .toast.error {
+            border-right-color: var(--danger-color);
+        }
+
+        .toast.warning {
+            border-right-color: var(--warning-color);
+        }
+
+        .toast-icon {
+            font-size: 1.5rem;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .toast-message {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
         @media (max-width: 768px) {
             .container {
                 width: 95%;
@@ -327,6 +386,8 @@
             data-dark="🌙 حالت شب">
             🌙 حالت شب
         </button>
+
+        <div class="toast-container" id="toastContainer"></div>
 
         <div class="file-upload">
             <label class="file-upload-label">
@@ -394,6 +455,38 @@
         let deletedHadiths = {};
         let shouldScroll = true;
 
+        // Toast Notification Functions
+        function showToast(title, message, type = 'success') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️'
+            };
+
+            toast.innerHTML = `
+                <span class="toast-icon">${icons[type]}</span>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+            `;
+
+            toastContainer.appendChild(toast);
+            
+            // Trigger animation
+            setTimeout(() => toast.classList.add('show'), 100);
+
+            // Remove toast after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
         document.getElementById('jsonFile').addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -404,20 +497,20 @@
                 try {
                     const raw = JSON.parse(e.target.result);
                     if (!raw || typeof raw !== 'object') {
-                        alert("ساختار فایل JSON معتبر نیست.");
+                        showToast('خطا', 'ساختار فایل JSON معتبر نیست.', 'error');
                         return;
                     }
                     hadithKeys = Object.keys(raw);
                     hadiths = hadithKeys.map(key => ({...raw[key], hadith_num: key}));
                     if (!Array.isArray(hadiths) || hadiths.length === 0) {
-                        alert("فایل JSON معتبر نیست یا احادیثی در آن وجود ندارد.");
+                        showToast('خطا', 'فایل JSON معتبر نیست یا احادیثی در آن وجود ندارد.', 'error');
                         return;
                     }
                 } catch (error) {
-                    alert("خطا در پردازش فایل JSON. لطفاً یک فایل معتبر انتخاب کنید.");
+                    showToast('خطا', 'خطا در پردازش فایل JSON. لطفاً یک فایل معتبر انتخاب کنید.', 'error');
                     return;
                 }
-                alert("فایل با موفقیت بارگذاری شد!");
+                showToast('موفقیت', 'فایل با موفقیت بارگذاری شد!', 'success');
                 currentIndex = 0;
                 selectedPropositions = {};
                 selectedEntities = {};
@@ -767,7 +860,7 @@
                 }
             }
             if (output.length === 0) {
-                alert("تمام احادیث حذف شده‌اند یا هیچ گزاره‌ای انتخاب نشده است!");
+                showToast('هشدار', 'تمام احادیث حذف شده‌اند یا هیچ گزاره‌ای انتخاب نشده است!', 'warning');
                 return;
             }
             let outputFileName = uploadedFileName + 'corrected.json';
@@ -778,6 +871,7 @@
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             document.body.removeChild(downloadAnchor);
+            showToast('موفقیت', 'فایل با موفقیت ذخیره شد!', 'success');
         }
 
         document.getElementById('newKeyword').addEventListener('keypress', function(event) {
