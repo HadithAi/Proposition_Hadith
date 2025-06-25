@@ -532,6 +532,10 @@
         </div>
 
         <div class="buttons">
+            <button id="saveProgressBtn" class="button button-secondary" onclick="saveProgress()" style="display: none;">
+                <span>💾</span>
+                <span>ذخیره موقت</span>
+            </button>
             <button id="saveBtn" class="button button-primary" onclick="downloadKeywords()" style="display: none;">
                 <span>💾</span>
                 <span>ذخیره و دانلود</span>
@@ -602,6 +606,23 @@
             reader.onload = function(e) {
                 try {
                     const raw = JSON.parse(e.target.result);
+                    // Check if it's a progress file
+                    if (raw && raw.__progress_save__) {
+                        // Restore all state
+                        hadiths = raw.hadiths;
+                        hadithKeys = raw.hadithKeys;
+                        currentIndex = raw.currentIndex;
+                        selectedPropositions = raw.selectedPropositions;
+                        selectedEntities = raw.selectedEntities;
+                        deletedHadiths = raw.deletedHadiths;
+                        uploadedFileName = raw.uploadedFileName;
+                        showToast('موفقیت', 'پیشرفت قبلی با موفقیت بارگذاری شد!', 'success');
+                        displayHadith();
+                        document.activeElement.blur();
+                        document.getElementById('nextBtn').focus();
+                        document.getElementById('saveProgressBtn').style.display = 'inline-block';
+                        return;
+                    }
                     if (!raw || typeof raw !== 'object') {
                         showToast('خطا', 'ساختار فایل JSON معتبر نیست.', 'error');
                         return;
@@ -628,6 +649,7 @@
                 displayHadith();
                 document.activeElement.blur();
                 document.getElementById('nextBtn').focus();
+                document.getElementById('saveProgressBtn').style.display = 'inline-block';
             };
             reader.readAsText(file);
         });
@@ -951,6 +973,7 @@
             document.getElementById('prevBtn').style.display = currentIndex > 0 ? 'inline-block' : 'none';
             document.getElementById('nextBtn').style.display = currentIndex < hadiths.length - 1 ? 'inline-block' : 'none';
             document.getElementById('saveBtn').style.display = currentIndex === hadiths.length - 1 ? 'inline-block' : 'none';
+            document.getElementById('saveProgressBtn').style.display = hadiths.length > 0 ? 'inline-block' : 'none';
 
             if (shouldScroll) {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1063,6 +1086,29 @@
             }
         }
 
+        function saveProgress() {
+            const progressData = {
+                __progress_save__: true,
+                hadiths,
+                hadithKeys,
+                currentIndex,
+                selectedPropositions,
+                selectedEntities,
+                deletedHadiths,
+                uploadedFileName
+            };
+            let baseName = uploadedFileName.replace(/(_progress)?(_corrected)?\.json$/i, '').replace(/\.json$/i, '');
+            let outputFileName = baseName + '_progress.json';
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(progressData, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", outputFileName);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            document.body.removeChild(downloadAnchor);
+            showToast('موفقیت', 'پیشرفت شما ذخیره شد!', 'success');
+        }
+
         function downloadKeywords() {
             let output = [];
             for (let i = 0; i < hadiths.length; i++) {
@@ -1101,7 +1147,8 @@
                 showToast('هشدار', 'تمام احادیث حذف شده‌اند یا هیچ گزاره‌ای انتخاب نشده است!', 'warning');
                 return;
             }
-            let outputFileName = uploadedFileName + 'corrected.json';
+            let baseName = uploadedFileName.replace(/(_progress)?(_corrected)?\.json$/i, '').replace(/\.json$/i, '');
+            let outputFileName = baseName + '_corrected.json';
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(output, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
